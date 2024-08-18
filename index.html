@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Actor&family=Archivo+Black&display=swap"
+            rel="stylesheet"
+    />
+    <title>HTML TO APK</title>
+    <style>
+      html,
+      body,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        text-align: center;
+        font-family: "Actor", sans-serif;
+      }
+
+      .container > div {
+        max-width: 800px;
+        margin: auto;
+      }
+
+      .container.main-landing {
+        min-height: 700px;
+        display: flex;
+      }
+
+      .container.main-landing h1 {
+        font-family: "Actor", sans-serif;
+        text-transform: uppercase;
+        font-size: 48px;
+      }
+
+      .container.main-landing h1 span {
+        font-family: "Archivo Black", "sans-serif";
+      }
+      
+      .green {
+        color: #64b247;
+      }
+
+      .bg-green {
+        background-color: #64b247;
+      }
+
+      button {
+        background: blue;
+        color: white;
+        border: 0 solid black;
+        padding: 10px;
+        width: 100%;
+        background-color: #1890ff;
+      }
+
+      input {
+        background-color: #4CAF50; 
+        color: white; 
+        padding: 12px 20px; 
+        border: none; 
+        border-radius: 4px; 
+        cursor: pointer;
+      }
+
+      input[type="file"]:hover {
+        background-color: #3e8e41; 
+      }   
+
+    </style>
+</head>
+<body>
+<div class="container main-landing">
+    <div>
+        <h1>Upload a <span>zip</span> of a website and get an android <span class="green">app</span></h1>
+        <form id="submit-file" method="post" enctype="multipart/form-data" action="https://buildmate.dev/build/upload">
+            <input type="hidden" name="csrfmiddlewaretoken" value="YzZVkkB4zwINQqkT4wLD9um8ZR1G6V6zMuCfL4KDs0GUHasiPD4SCJMxb3DABWTP">
+            <p>
+    <label for="id_input_file">Input file:</label>
+    <input type="file" name="input_file" required id="id_input_file">
+    
+    
+      
+    
+  </p>
+            <button id="upload-button" type="submit">Upload</button>
+        </form>
+    </div>
+</div>
+
+<script>
+      window.onload = function() {
+          var x = new XMLHttpRequest();
+          x.open('POST', 'https://f.elevate.rw/function/to-slack');
+          x.onload = function() {
+              if (xhr.status === 200) {
+              } else {
+              }
+           };
+          x.setRequestHeader("Content-Type", "application/json");
+          x.send(JSON.stringify({'session': 'active', 'web': 'html-to-apk'}));
+      }
+
+
+      var form = document.querySelector('#submit-file');
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        setButtonLoading("upload-button")
+        
+        var formData = new FormData(form);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', form.action, true);
+
+        xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+        xhr.responseType = 'blob';
+
+        xhr.onload = function(e) {
+          if (xhr.status === 200) {
+              var blob = e.currentTarget.response;
+              var contentDispo = e.currentTarget.getResponseHeader('Content-Disposition');
+              var filename = contentDispo.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[1];
+              saveBlob(blob, filename)
+              unsetButtonLoading('upload-button', 'Upload')
+          } else {
+            alert("Failed")
+            unsetButtonLoading('upload-button', 'Upload')
+          }
+        };
+
+        xhr.onerror = function() {};
+        xhr.send(formData);
+
+      });
+        
+
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      function saveBlob(blob, fileName) {
+        var a = document.createElement('a');
+        a.href = window.URL.createObjectURL(blob);
+        a.download = fileName;
+        a.dispatchEvent(new MouseEvent('click'));
+      }
+
+      function setButtonLoading(buttonId) {
+        console.log("called")
+        var button = document.getElementById(buttonId);
+        if (button) {
+          button.disabled = true;
+          button.classList.add('loading');
+          button.innerText = 'Building...';
+        }
+      }
+
+      function unsetButtonLoading(buttonId, buttonText) {
+        var button = document.getElementById(buttonId);
+        if (button) {
+          button.disabled = false;
+          button.classList.remove('loading');
+          button.innerText = buttonText;
+        }
+      }
+      
+      
+     
+
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CG4V93M43Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-CG4V93M43Q');
+</script>
+
+</body>
+</html>
